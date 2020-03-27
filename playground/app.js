@@ -1,0 +1,5 @@
+var stuff = require('./stuff.js')
+console.log(stuff.function1(['namrata','nikita','laiket','piyush']))
+console.log(stuff.function2(5,10))
+console.log(stuff.pi)
+console.log(stuff.function2(stuff.pi,10))
