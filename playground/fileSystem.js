@@ -31,8 +31,15 @@ console.log('This is  my read stream---'+myWriteStream)
 var myWriteStream = fs.createWriteStream('./myWrite.txt')
 console.log('Thsi is my write stream---'+myWriteStream)
 
-myReadStream.on('data',function(chunks){
-    console.log('new chunks recieved');
+myReadStream.on('data', function(chunks){
     myWriteStream.write(chunks);
-    console.log('this is my chunks of data---'+chunks + "      "+typeof(chunks))
 })
+
+// myReadStream.on('data',function(chunks){
+//     console.log('new chunks recieved');
+//     myWriteStream.write(chunks);
+//     console.log('this is my chunks of data---'+chunks + "      "+typeof(chunks))
+// })
+
+// above comment code is similar to this pipe method
+myReadStream.pipe(myWriteStream)
