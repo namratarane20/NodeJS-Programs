@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color: orchid; text-align: center;color: white; ">
+
+    <%- include('partials/header') %>
+
+    <h1>!!!!!!!!!!!!!! Welcome to Login page !!!!!!!!!!!! </h1>
+    <h3>Contact the closest cats on the web right here....</h3>
+    <div style="background-color: white;height: 400px;width: 400px;margin-left: 480px; border:solid black;">
+        <br>
+        <form id="contact-form" method="POST" action="/login">
+            <h3><label for="who" style="color: black;"> Who do you want to contact?</label></h3>
+
+            <input type="text" id="name1" name="nameProp" >
+            <br><br>
+
+            <h3><label for="dept" style="color: black;"> Which department?</label></h3>
+
+            <input type="text"  id="dept" name="deptName" >
+            <br><br>
+
+            <h3><label for="email" style="color: black;">Your Email</label></h3>
+
+            <input type="text" id="email" name="emailName">
+            <br> <br> <br>
+            <button type="submit" onclick="myFunction()"
+                style="font-size:25px ; background-color:blue ; border-color: blue;color: white;">Submit</button>
+        </form>
+
+        <script>
+            function myFunction() {
+                document.getElementById("name1").value()=""
+            }
+        </script>
+    </div>
+
+
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

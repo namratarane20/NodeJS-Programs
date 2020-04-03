@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color:palegreen; text-align: center;color: black; ">
+  
+    <%- include('partials/header') %>
+    <h1>!!!!!!!!! Most Welcome User !!!!!!</h1>
+
+    <div >
+        <h1>Welcome <%= data.nameProp %></h1>
+        <h2>To <%= data.deptName %></h2>
+        <h2>With your mail id <%= data.emailName%></h2>
+    </div>
+    
+    <%- include('partials/footer') %>
+</body>
+
+</html>
