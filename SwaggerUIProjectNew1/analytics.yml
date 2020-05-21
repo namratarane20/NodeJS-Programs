@@ -1,0 +1,3177 @@
+    swagger: '2.0'
+    info:
+      description: 'This api docs manages endpoints for analytics'
+      version: 1.0.0
+      title: Analytics Microservice
+      contact:
+        email: krishnaraj.vr@impelsys.com
+      license:
+        name: Apache 2.0
+        url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    host: apidev.ipublishcentral.net
+    basePath: /report/v1
+    tags:
+      - name: books
+        description: Operations about books
+      - name: realtime
+        description: Operations based on realtime api's
+      - name: events collector
+        description: Operations about events collector
+      - name: kpi
+        description: Operations for KPI reports
+    schemes:
+      - https
+    paths:
+      /books:
+        get:
+          tags:
+            - books
+          summary: Get a list of books belonging to a tenant
+          description: |
+            * Get a list of books belonging to a tenant
+          operationId: getBooksList
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputReportsBooks'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /topBooks:
+        get:
+          tags:
+            - books
+          summary: Get a list of top books by event count for a given list of events
+          description:  |
+            * Get a list of top books by event count for a given list of events
+          operationId: getTopBooks
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: events
+              in: query
+              description: List of event names. Allowed values- pageView, bookmarkAdd, noteAdd, contentView, ..
+              required: true
+              type: array
+              items:
+                type: string
+            - name: startDate
+              in: query
+              description: Start date
+              required: true
+              type: string
+            - name: endDate
+              in: query
+              description: end date
+              type: string
+            - name: institutionIds
+              in: query
+              description: Institution ids
+              type: array
+              items:
+                type: string
+            - name: productIds
+              in: query
+              description: product ids
+              type: array
+              items:
+                type: string
+            - name: limit
+              in: query
+              description: row limit
+              type: number
+            - name: platforms
+              in: query
+              description: Device platforms supported. Allowed values- android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. Allowed values- apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. Allowed values- ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. Allowed values- 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputTopBooks'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /readHistory:
+        get:
+          tags:
+            - books
+          summary: Get a list of book history details for a given date interval
+          description: |
+            * Get a list of book history details for a given date interval
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+            - name: "endDate"
+              in: query
+              description: "End date in the format 'YYYY-MM-DD'"
+              type: string
+            - name: "userId"
+              in: query
+              description: User Id
+              type: string
+            - name: "profileId"
+              in: query
+              description: Profile Id
+              type: string
+            - name: productIds
+              in: query
+              description: "List of product ids"
+              type: array
+              items:
+                type: string
+            - name: institutionIds
+              in: query
+              description: List of institution ids
+              type: array
+              items:
+                type: string
+            - name: "page-number"
+              in: query
+              description: "Current page number"
+              type: number
+            - name: "page-size"
+              in: query
+              description: "Number of records per page"
+              required: false
+              type: number
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputReadHistory'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /productTimespent:
+        get:
+          tags:
+            - books
+          summary: Get a list of book details with read duration in a given date frame
+          description: |
+            * Get a list of book details with read duration in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "productIds"
+              in: query
+              description: "List of product ids"
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputTimespent'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /productTimespentSummary:
+        get:
+          tags:
+            - books
+          summary: Get summary of book read duration and date in a given date frame
+          description: |
+            * Get summary of book read duration and date in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "productIds"
+              in: query
+              description: "List of product ids"
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputTimespentSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /productPageSummary:
+        get:
+          tags:
+            - books
+          summary: Get page summary by date and page number for a given pdf book in a specific date frame
+          description: |
+            * Get page summary by date and page number for a given pdf book in a specific date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: bookId
+              in: query
+              description: Book id
+              type: string
+              required: true
+            - name: events
+              in: query
+              description: List of event names. Allowed values- pageView, bookmarkAdd, noteAdd, highlightAdd
+              type: array
+              items:
+                type: string
+              required: true
+            - name: startDate
+              in: query
+              description: Start date in the format 'YYYY-MM-DD'
+              type: string
+              required: true
+            - name: endDate
+              in: query
+              description: End time in the format 'YYYY-MM-DD'. Defaults to current date
+              type: string
+            - name: institutionIds
+              in: query
+              description: List of institution ids
+              type: array
+              items:
+                type: string
+            - name: productIds
+              in: query
+              description: List of product ids
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputPages'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /productContentSummary:
+        get:
+          tags:
+            - books
+          summary: Get content summary by date and epub file for a given ePub book in a specific date frame
+          description: |
+            * Get content summary by date and epub file for a given ePub book in a specific date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: bookId
+              in: query
+              description: Book id
+              type: string
+              required: true
+            - name: events
+              in: query
+              description: List of event names. Allowed values- pageView, bookmarkAdd, noteAdd, highlightAdd
+              type: array
+              items:
+                type: string
+              required: true
+            - name: startDate
+              in: query
+              description: Start date in the format 'YYYY-MM-DD'
+              type: string
+              required: true
+            - name: endDate
+              in: query
+              description: End time in the format 'YYYY-MM-DD'. Defaults to current date
+              type: string
+            - name: institutionIds
+              in: query
+              description: List of institution ids
+              type: array
+              items:
+                type: string
+            - name: productIds
+              in: query
+              description: List of product ids
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputContents'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /realtimeUserSummary:
+        get:
+          tags:
+            - realtime
+          summary: Get a list of active users over a time range
+          description: |
+            * Get a list of active users over a time range
+          operationId: getRealtimeUserSummary
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startTime"
+              in: query
+              description: "Start time in the format 'YYYY-MM-DD HH:mm'"
+              type: string
+              required: true
+            - name: "endTime"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD HH:mm'. Defaults to current time"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "Institution ids"
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRealtimeUserSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /realtimeEventSummary:
+        get:
+          tags:
+            - realtime
+          summary: Get the count of event types, if it occured within the time range
+          description: |
+            * Get the count of event types, if it occured within the time range
+          operationId: getRealtimeEventSummary
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startTime"
+              in: query
+              description: "Start time in the format 'YYYY-MM-DD HH:mm'"
+              type: string
+              required: true
+            - name: "endTime"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD HH:mm'. Defaults to current time"
+              type: string
+            - name: "eventTypes"
+              in: query
+              description: "event types"
+              type: array
+              required : true
+              items:
+                type: string
+            - name: "institutionIds"
+              in: query
+              description: "Institution ids"
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRealtimeEventSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /realtimeActivity:
+        get:
+          tags:
+            - realtime
+          summary: Get the count of events for specified interval over a time range
+          description: |
+            * Get the count of events for specified interval over a time range
+          operationId: getRealtimeActivity
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startTime"
+              in: query
+              description: "Start time in the format 'YYYY-MM-DD HH:mm'"
+              type: string
+              required: true
+            - name: "endTime"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD HH:mm'. Defaults to current time"
+              type: string
+            - name: "interval"
+              in: query
+              description: "time interval in minutes. Defaults to 5 minutes"
+              type: string
+            - name: "eventTypes"
+              in: query
+              description: "event types"
+              type: array
+              required : true
+              items:
+                type: string
+            - name: "institutionIds"
+              in: query
+              description: "Institution ids"
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRealtimeActivity'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /realtimeUserCountrySummary:
+        get:
+          tags:
+            - realtime
+          summary: Get the number of active users in each country within the time range
+          description: |
+            * Get the number of active users in each country within the time range
+          operationId: getRealtimeUserCountrySummary
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startTime"
+              in: query
+              description: "Start time in the format 'YYYY-MM-DD HH:mm'"
+              type: string
+              required: true
+            - name: "endTime"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD HH:mm'. Defaults to current time"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "Institution ids"
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRealtimeUserCountrySummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /realtimeReadHistory:
+        get:
+          tags:
+            - realtime
+          summary: Get a list of book history details in realtime
+          description: |
+            * Get a list of book history details in realtime
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+            - name: "endDate"
+              in: query
+              description: "End date in the format 'YYYY-MM-DD'"
+              type: string
+            - name: "userId"
+              in: query
+              description: User Id
+              type: string
+            - name: "profileId"
+              in: query
+              description: Profile Id
+              type: string
+            - name: productIds
+              in: query
+              description: "List of product ids"
+              type: array
+              items:
+                type: string
+            - name: institutionIds
+              in: query
+              description: List of institution ids
+              type: array
+              items:
+                type: string
+            - name: "page-number"
+              in: query
+              description: "Current page number"
+              type: number
+            - name: "page-size"
+              in: query
+              description: "Number of records per page"
+              required: false
+              type: number
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRealtimeReadHistory'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /sessions:
+        get:
+          tags:
+            - sessions
+          summary: Get a list of sessions
+          description: |
+            * Get a list of sessions
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date"
+              type: string
+              required: true
+            - name: "dimension"
+              in: query
+              description: "Allowed values- day, week, month, year"
+              type: string
+              required: true
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "endDate"
+              in: query
+              description: "End date If not specified present day is taken as endDate"
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputSessions'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /sessionSummary:
+        get:
+          tags:
+            - sessions
+          summary: Get a summary of sessions, users, newusers and events
+          description: |
+            * Get a summary of sessions
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date"
+              type: string
+              required: true
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "endDate"
+              in: query
+              description: "End date If not specified present day is taken as endDate"
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputSessionSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /sessionSegments:
+        get:
+          tags:
+            - sessions
+          summary: Get a summary of sessions, users, newusers and events on different segments
+          description: |
+            * Get a summary of sessions, users, newusers and events on different segments
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date"
+              type: string
+              required: true
+            - name: segment
+              in: query
+              description: Segment supported. Allowed values- device_platform, device_make, device_model, app_version
+              type: string
+              required: true
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "endDate"
+              in: query
+              description: "End date If not specified present day is taken as endDate"
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputSessionSegments'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /institutions:
+        get:
+          tags:
+            - institutions
+          summary: Get a list of institutions
+          description: |
+            * Get a list of institutions
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputInstitutions'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /events:
+        post:
+          tags:
+            - events collector
+          summary: Add events
+          description: |
+            * Add events
+          operationId: addEvents
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - in: body
+              name: "body"
+              description: "events that needs to be collected"
+              required: true
+              schema:
+                $ref: '#/definitions/InputEvent'
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/200ResponseWithNoData'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+        get:
+            tags:
+              - events
+            summary: Get events
+            description: |
+              * Get events
+            consumes:
+              - application/json
+            produces:
+              - application/json
+            parameters:
+              - name: "startDate"
+                in: query
+                description: "Start date"
+                type: string
+                required: true
+              - name: "dimension"
+                in: query
+                description: "Dimension"
+                type: string
+                required: true
+              - name: "eventTypes"
+                in: query
+                description: "List of event Types"
+                type: array
+                items:
+                  type: string
+              - name: "institutionIds"
+                in: query
+                description: "List of institution ids"
+                type: array
+                items:
+                  type: string
+              - name: productIds
+                in: query
+                description: "List of product ids"
+                type: array
+                items:
+                  type: string
+              - name: platforms
+                in: query
+                description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+                type: array
+                items:
+                  type: string
+              - name: deviceMakes
+                in: query
+                description: Device make supported. For example apple, oneplus, ..
+                type: array
+                items:
+                  type: string
+              - name: deviceModels
+                in: query
+                description: Device models supported. For example ipad, nexus, ..
+                type: array
+                items:
+                  type: string
+              - name: appVersions
+                in: query
+                description: App versions supported. For example 4.0.1, 5.0.0, ..
+                type: array
+                items:
+                  type: string
+              - name: segment
+                in: query
+                description: Segment supported. Allowed values- event_type, device_platform, device_make, device_model, app_version
+                type: string
+              - name: source
+                in: query
+                description: Source supported. Allowed values- web and app
+                type: string
+              - name: "endDate"
+                in: query
+                description: "End date If not specified present day is taken as endDate"
+                type: string
+            responses:
+              '200':
+                description: successful operation
+                schema:
+                  $ref: '#/definitions/OutputEvents'
+              '400':
+                description: Invalid input
+                schema:
+                  $ref: '#/definitions/ErrorInvalid'
+              '401':
+                description: Invalid Token
+                schema:
+                  $ref: '#/definitions/ErrorInvalidToken'
+              '403':
+                description: unauthorized to access URL
+                schema:
+                  $ref: '#/definitions/ErrorInvalidUrl'
+            security:
+              - X-Jwt-Token: []
+      /eventFilters:
+        get:
+          tags:
+            - events
+          summary: Get a list of filters for a given event dimension
+          description: |
+            * Get a list of filters for a given event dimension
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: filterType
+              in: query
+              description: Type supported. Allowed values- event_type, device_platform, device_make, device_model, app_version
+              type: string
+              required: true
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputEventFilters'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /funnel:
+        get:
+          tags:
+            - funnel
+          summary: Get funnel report
+          description: |
+            * Get funnel report
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: startDate
+              in: query
+              description: "Start Date in the format ‘YYYY-MM-DD’"
+              type: string
+              required: true
+            - name: steps
+              in: query
+              description: funnel steps. Allowed values- siteLogin, bookDownloadComplete, bookOpen, bookClose, catalogClick, catalogFilterClick, searchClick, advancedSearchClick, catalogProductListClick, noteAdd, searchResult, highlightAdd, bookmarkAdd
+              type: array
+              items:
+                type : string
+              required: true
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "endDate"
+              in: query
+              description: "End Date in the format 'YYYY-MM-DD’. If not specified present day is taken as endDate"
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputFunnel'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /retention:
+        get:
+          tags:
+            - retention
+          summary: Get a list of active user retention
+          description: |
+            * Get a list of active user retention
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: startDate
+              in: query
+              description: "Start Date in the format ‘YYYY-MM-DD’"
+              type: string
+              required: true
+            - name: dimension
+              in: query
+              description: Dimensions supported. Allowed values- day, week.
+                If dimension input is day, output count value will be user retention array of 1 day, 3 day and 7 day interval. If it is week, output count value will be user retention array of 1 week, 2 week and 3 week interval.
+              type: string
+              required: true
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "endDate"
+              in: query
+              description: "End Date in the format 'YYYY-MM-DD’. If not specified present day is taken as endDate"
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputRetention'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /users:
+        get:
+          tags:
+            - users
+          summary: Get a list of users belonging to a tenant
+          description: |
+            * Get a list of users belonging to a tenant
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputUsers'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /userEvents:
+        get:
+          tags:
+            - users
+          summary: Get a list of user details with event count in a given date frame
+          description: |
+            * Get a list of user details with event count in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: events
+              in: query
+              description: List of event names. Allowed values- pageView, bookmarkAdd, noteAdd, highlightAdd
+              type: array
+              items:
+                type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "userIds"
+              in: query
+              description: "List of user ids"
+              type: array
+              items:
+                type: string
+            - name: "limit"
+              in: query
+              description: "Row limit"
+              type: number
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputUsersEvents'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /userEventSummary:
+        get:
+          tags:
+            - users
+          summary: Get summary of user event count with timestamp in a given date frame
+          description: |
+            * Get summary of user event count with timestamp in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: events
+              in: query
+              description: List of event names. Allowed values- pageView, bookmarkAdd, noteAdd, highlightAdd
+              type: array
+              items:
+                type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "userIds"
+              in: query
+              description: "List of user ids"
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputUsersEventSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /newUsers:
+        get:
+          tags:
+            - users
+          summary: Get a list of new user details with session count in a given date frame
+          description: |
+            * Get a list of new user details with session count in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "userIds"
+              in: query
+              description: "List of user ids"
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputNewUsers'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /activeUsers:
+        get:
+          tags:
+            - users
+          summary: Get a list of active user details with session count in a given date frame
+          description: |
+            * Get a list of active user details with session count in a given date frame
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "startDate"
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              type: string
+              required: true
+            - name: "endDate"
+              in: query
+              description: "End time in the format 'YYYY-MM-DD'. Defaults to current date"
+              type: string
+            - name: "institutionIds"
+              in: query
+              description: "List of institution ids"
+              type: array
+              items:
+                type: string
+            - name: "userIds"
+              in: query
+              description: "List of user ids"
+              type: array
+              items:
+                type: string
+            - name: platforms
+              in: query
+              description: Device platforms supported. For example android, iphoneos, kindle, windowsphone, ..
+              type: array
+              items:
+                type: string
+            - name: deviceMakes
+              in: query
+              description: Device make supported. For example apple, oneplus, ..
+              type: array
+              items:
+                type: string
+            - name: deviceModels
+              in: query
+              description: Device models supported. For example ipad, nexus, ..
+              type: array
+              items:
+                type: string
+            - name: appVersions
+              in: query
+              description: App versions supported. For example 4.0.1, 5.0.0, ..
+              type: array
+              items:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputActiveUsers'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /kpiSummary:
+        get:
+          tags:
+            - kpi
+          summary: Get the summary of KPI reports
+          description: |
+            * Summary of KPI reports
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "institutionId"
+              in: query
+              description: "institution id"
+              required: false
+              type: number
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputKpiSummary'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /kpiUsers:
+        get:
+          tags:
+            - kpi
+          summary: Get KPI report for users
+          description: |
+            * KPI user reports
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "institutionId"
+              in: query
+              description: "institution id"
+              required: false
+              type: number
+            - name: startDate
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              required: true
+              type: string
+            - name: endDate
+              in: query
+              description: "End date in the format 'YYYY-MM-DD'. Defaults to current date"
+              required: false
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputKpiUsers'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+      /kpiAssignments:
+        get:
+          tags:
+            - kpi
+          summary: Get KPI report for Assignments
+          description: |
+            * KPI assignment reports
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: "institutionId"
+              in: query
+              description: "institution id"
+              required: false
+              type: number
+            - name: startDate
+              in: query
+              description: "Start date in the format 'YYYY-MM-DD'"
+              required: true
+              type: string
+            - name: endDate
+              in: query
+              description: "End date in the format 'YYYY-MM-DD'. Defaults to current date"
+              required: false
+              type: string
+          responses:
+            '200':
+              description: successful operation
+              schema:
+                $ref: '#/definitions/OutputKpiAssignments'
+            '400':
+              description: Invalid input
+              schema:
+                $ref: '#/definitions/ErrorInvalid'
+            '401':
+              description: Invalid Token
+              schema:
+                $ref: '#/definitions/ErrorInvalidToken'
+            '403':
+              description: unauthorized to access URL
+              schema:
+                $ref: '#/definitions/ErrorInvalidUrl'
+          security:
+            - X-Jwt-Token: []
+    securityDefinitions:
+      X-Jwt-Token:
+        type: apiKey
+        name: X-Jwt-Token
+        in: header
+    definitions:
+      200ResponseWithNoData:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+      InvalidDetails:
+        type: object
+        properties:
+          code:
+            type: string
+            example: NULL_VALUE
+          target:
+            type: string
+            example: name
+          message:
+            type: string
+            example: '{fieldname}s field required'
+      Invalid:
+        type: object
+        properties:
+          code:
+            type: string
+            example: INVALID_ARGUMENT
+          message:
+            type: string
+            example: Some fields are wrong
+          details:
+            type: array
+            items:
+              $ref: '#/definitions/InvalidDetails'
+      BadRequest:
+        type: object
+        properties:
+          code:
+            type: string
+            example: BAD_REQUEST
+          message:
+            type: string
+            example: 'Bad request message'
+      NotFound:
+        type: object
+        properties:
+          code:
+            type: string
+            example: NOT_FOUND
+          message:
+            type: string
+            example: '{resource} with {id} not found'
+      InvalidToken:
+        type: object
+        properties:
+          code:
+            type: string
+            example: UNAUTHENTICATED
+          message:
+            type: string
+            example: Invalid token
+      InvalidURL:
+        type: "object"
+        properties:
+          code:
+            type: string
+            example: "PERMISSION_DENIED"
+          message:
+            type: "string"
+            example: "PERMISSION_DENIED"
+      ErrorInvalid:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 400
+          error:
+            $ref: '#/definitions/Invalid'
+          data:
+            type: object
+      ErrorBadRequest:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 400
+          error:
+            $ref: '#/definitions/BadRequest'
+          data:
+            type: object
+      ErrorNotFound:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 404
+          error:
+            $ref: '#/definitions/NotFound'
+          data:
+            type: object
+      UnprocessableEntity:
+        type: "object"
+        properties:
+          code:
+            type: string
+            example: "UNPROCESSABLE ENTITY"
+          message:
+            type: "string"
+            example: "Unprocessable entity"
+      ErrorUnprocessableEntity:
+        type: "object"
+        properties:
+          status:
+            type: "integer"
+            format: "int32"
+            example: 422
+          error:
+            $ref: "#/definitions/UnprocessableEntity"
+          data:
+            type: "object"
+      ErrorInvalidToken:
+        type: "object"
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 401
+          error:
+            $ref: '#/definitions/InvalidToken'
+          data:
+            type: object
+      ErrorInvalidUrl:
+        type: "object"
+        properties:
+          status:
+            type: "integer"
+            format: "int32"
+            example: 403
+          error:
+            $ref: "#/definitions/InvalidURL"
+          data:
+            type: "object"
+      OutputReportsBooks:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              books:
+                items:
+                  $ref: '#/definitions/Book'
+                example:
+                  - id: 100
+                    name: "book_1"
+                    code: "book_1"
+                  - id: 101
+                    name: "book_2"
+                    code: "book_2"
+      OutputReadHistory:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              readHistory:
+                type: array
+                items:
+                  $ref: '#/definitions/History'
+                example:
+                  - productId: '2'
+                    userId: '32'
+                    bookReadProgress: 100.00
+                    bookReadStatus: 'COMPLETE'
+                    lastActivityTime: '2018-07-04T09:03:26.973Z'
+                    lastReadPage: 'III Boiterie non fébrile'
+                  - productId: '3'
+                    userId: '33'
+                    bookReadProgress: 10.50
+                    bookReadStatus: 'INCOMPLETE'
+                    lastActivityTime: '2018-07-02T09:03:26.973Z'
+                    lastReadPage: 'II Traumatisme crânien'
+              _pagination:
+                $ref: "#/definitions/Pagination"
+      OutputRealtimeReadHistory:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              readHistory:
+                type: array
+                items:
+                  $ref: '#/definitions/RealtimeHistory'
+                example:
+                  - productId: '2'
+                    userId: '32'
+                    pageReadCount: '28'
+                    lastActivityTime: '2018-07-04T09:03:26.973Z'
+                    lastReadPage: 7
+                  - productId: '3'
+                    userId: '33'
+                    pageReadCount: '6'
+                    lastActivityTime: '2018-07-02T09:03:26.973Z'
+                    lastReadPage: 7
+              _pagination:
+                $ref: "#/definitions/Pagination"
+      OutputTimespent:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              productTimespent:
+                type: array
+                items:
+                  $ref: '#/definitions/Timespent'
+                example:
+                  - id: 153
+                    name: 'product_1'
+                    code: '988765123412'
+                    format: 'pdf'
+                    duration: 25
+                  - id: 103
+                    name: 'product_2'
+                    code: '988765125413'
+                    format: 'pdf'
+                    duration: 12
+      OutputTimespentSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              productTimespentSummary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: number
+                    duration:
+                      type: number
+                example:
+                  - timestamp: 1441079662773
+                    duration: 1000
+                  - timestamp: 1441079662774
+                    duration: 2000
+      OutputKpiUsers:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              kpiUsers:
+                type: array
+                items:
+                  $ref: '#/definitions/kpiUsers'
+      kpiUsers:
+        type: object
+        properties:
+          timestamp:
+            type: number
+            example: 1575244800
+          totalUser:
+            type: number
+            example: 150
+          activeUser:
+            type: number
+            example: 100
+          pendingUser:
+            type: number
+            example: 25
+          deactivatedUser:
+            type: number
+            example: 25
+      OutputKpiAssignments:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              kpiUsers:
+                type: array
+                items:
+                  $ref: '#/definitions/kpiAssignments'
+      kpiAssignments:
+        type: object
+        properties:
+          timestamp:
+            type: number
+            example: 1575244800
+          totalAssignment:
+            type: number
+            example: 150
+          completedAssignment:
+            type: number
+            example: 100
+          incompleteAssignment:
+            type: number
+            example: 25
+      OutputKpiSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              kpiSummary:
+                $ref: "#/definitions/kpiSummary"
+      kpiSummary:
+        type: object
+        properties:
+          institutionCount:
+            type: number
+            example: 20
+          userCount:
+            type: number
+            example: 30
+          assignmentCount:
+            type: number
+            example: 40
+          lastUpdatedTime:
+            type: string
+            format: date-time
+      OutputPages:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              productPageSummary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: number
+                    page:
+                      type: number
+                    name:
+                      type: string
+                    count:
+                      type: number
+                example:
+                  - timestamp: 1441079662773
+                    page: 1
+                    name: "I"
+                    count:  12
+                  - timestamp: 1441079662774
+                    page: 2
+                    name: "II"
+                    count:  15
+      OutputContents:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              productContentSummary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: number
+                    url:
+                      type: string
+                    name:
+                      type: string
+                    count:
+                      type: number
+                example:
+                  - timestamp: 1441079662773
+                    url: "xhtml/cover.html"
+                    name: "Cover"
+                    count:  12
+                  - timestamp: 1441079662774
+                    page: "xhtml/chapter.html"
+                    name: "Chapter"
+                    count:  15
+      Book:
+        type: object
+        properties:
+          id:
+            type: "integer"
+            format: "int64"
+            example: 1
+          name:
+            type: "string"
+            example: "book"
+          code:
+            type: "string"
+            example: "book"
+      OutputTopBooks:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: "object"
+            properties:
+              topBooks :
+                type : array
+                items:
+                  $ref: "#/definitions/TopBooks"
+                example:
+                - id: 100
+                  name: "product 1"
+                  code: "9876866612"
+                  format: "pdf"
+                  count: "27"
+                - id: 101
+                  name: "product 2"
+                  code: "9876866613"
+                  format: "pdf"
+                  count: "24"
+      OutputRealtimeUserSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              users:
+                type: number
+                example: 20
+      OutputSessions:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              sessions:
+                type: array
+                items:
+                  $ref: '#/definitions/Session'
+                example:
+                  - timestamp: 1530612009
+                    sessions: 7319
+                    newusers: 34
+                    users: 23
+                    events: "7505"
+                  - timestamp: 1530632009
+                    sessions: 5319
+                    newusers: 14
+                    users: 33
+                    events: "2505"
+      OutputSessionSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              sessionSummary:
+                type: array
+                items:
+                  $ref: '#/definitions/SessionSummary'
+                example:
+                  - sessions: 15306
+                    newusers: 731
+                    users: 34
+                    events: 750576
+      OutputSessionSegments:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              sessionSegments:
+                type: array
+                items:
+                  $ref: '#/definitions/SessionSegments'
+                example:
+                  - segment: 'ANDROID'
+                    sessions: 7319
+                    newusers: 34
+                    users: 23
+                    events: 750
+                  - segment: 'iOS'
+                    sessions: 5319
+                    newusers: 14
+                    users: 33
+                    events: 231
+      OutputEventFilters:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              eventFilters:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  - 'android'
+                  - 'iphoneos'
+                  - 'kindle'
+                  - 'windowsphone'
+                  - 'windows'
+                  - 'linux'
+      OutputFunnel:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              funnel:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    step:
+                      type: string
+                    count:
+                      type: number
+                example:
+                  - step: siteLogin
+                    count: 30
+                  - step: bookDownloadComplete
+                    count: 10
+                  - step: bookOpen
+                    count: 18
+      OutputRetention:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              retention:
+                type: array
+                items:
+                  $ref: '#/definitions/Retention'
+                example:
+                  - timestamp: 1441079662773
+                    counts: [30, 11, 3]
+                    first: 100
+                  - timestamp: 1441079663774
+                    counts: [40, 12, 2]
+                    first: 90
+      OutputUsers:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                example:
+                  - id: 100
+                    name: 'user1'
+                    email: 'user1@mail.com'
+                  - id: 101
+                    name: 'user2'
+                    email: 'user2@mail.com'
+      OutputUsersEvents:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              userEvents:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    count:
+                      type: number
+                    institutionId:
+                      type: string
+                    institutionName:
+                      type: string
+                example:
+                  - id: 100
+                    name: 'user1'
+                    email: 'user1email@emial.com'
+                    count: 25
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+                  - id: 101
+                    name: 'user2'
+                    email: 'user2email@mail.com'
+                    count: 12
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+      OutputUsersEventSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              userEventSummary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: number
+                    count:
+                      type: number
+                example:
+                  - timestamp: 1441079662773
+                    count: 25
+                  - timestamp: 1441079662774
+                    count: 21
+      OutputNewUsers:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              newUsers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    format:
+                      type: string
+                    count:
+                      type: number
+                    institutionId:
+                      type: string
+                    institutionName:
+                      type: string
+                example:
+                  - id: 100
+                    name: 'user1'
+                    email: 'user1email@emial.com'
+                    format: 'pdf'
+                    count: 25
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+                  - id: 101
+                    name: 'user2'
+                    email: 'user2email@mail.com'
+                    format: 'pdf'
+                    count: 12
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+      OutputActiveUsers:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              activeUsers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    format:
+                      type: string
+                    count:
+                      type: number
+                    institutionId:
+                      type: string
+                    institutionName:
+                      type: string
+                example:
+                  - id: 100
+                    name: 'user1'
+                    email: 'user1email@emial.com'
+                    format: 'pdf'
+                    count: 25
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+                  - id: 101
+                    name: 'user2'
+                    email: 'user2email@mail.com'
+                    format: 'pdf'
+                    count: 12
+                    institutionId: '12'
+                    institutionName: 'Institution 1'
+      Retention:
+        type: object
+        required:
+          - timestamp
+          - counts
+          - first
+        properties:
+          timestamp:
+            type: number
+            example: 1441079662773
+          counts:
+            type: array
+            items:
+              type: number
+            example:
+              - 30
+              - 11
+              - 3
+          first:
+            type: number
+            example: 90
+      OutputInstitutions:
+        type: object
+        properties:
+          status:
+            type: integer
+            format: int32
+            example: 200
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              institutions:
+                type: array
+                items:
+                  $ref: '#/definitions/Institution'
+                example:
+                      - id: 15
+                        name: 'institution 1'
+                        code: 'institution1'
+                      - id: 16
+                        name: 'institution 2'
+                        code: 'institution2'
+      Institution:
+        type: object
+        required:
+          - id
+          - name
+          - code
+        properties:
+          id:
+            type: number
+            example: 12
+          name:
+            type: string
+            example: 'institution1'
+          code:
+            type: string
+            example: 'institution1'
+      OutputEvents:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              events:
+                type: array
+                items:
+                  $ref: '#/definitions/EventObject'
+                example:
+                  - timestamp: 1530612009
+                    count: 7319
+                    segment: "5.0.9"
+                  - timestamp: 1491177600
+                    count: 7505
+                    segment: "5.1.9"
+      TopBooks:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+            format: "int64"
+            example: 100
+          name:
+            type: "string"
+            example: "product 1"
+          code:
+            type: "string"
+            example: "9876866612"
+          format:
+            type: "string"
+            example: "pdf"
+          count:
+            type: "integer"
+            example: "25"
+      EventObject:
+        type: object
+        required:
+          - timestamp
+          - count
+          - segment
+        properties:
+          timestamp:
+            type: number
+          count:
+            type: number
+            example: 2334
+          segment:
+            type: string
+      Session:
+        type: object
+        required:
+          - timestamp
+          - session
+          - newusers
+          - users
+          - events
+        properties:
+          timestamp:
+            type: number
+          sessions:
+            type: number
+          newusers:
+            type: number
+          users:
+            type: number
+          events:
+            type: string
+      SessionSummary:
+        type: object
+        required:
+          - sesssions
+          - newusers
+          - users
+          - events
+        properties:
+          sessions:
+            type: number
+          newusers:
+            type: number
+          users:
+            type: number
+          events:
+            type: number
+      SessionSegments:
+        type: object
+        required:
+          - segment
+          - sesssions
+          - newusers
+          - users
+          - events
+        properties:
+          segments:
+            type: string
+          sessions:
+            type: number
+          newusers:
+            type: number
+          users:
+            type: number
+          events:
+            type: number
+      History:
+        type: object
+        required:
+          - productId
+          - userId
+          - bookReadProgress
+          - bookReadStatus
+          - lastActivityTime
+          - lastReadPage
+        properties:
+          productId:
+            type: string
+            example: 23
+          userId:
+            type: string
+            example: 3
+          bookReadProgress:
+            type: number
+            example: 100
+          bookReadStatus:
+            type: string
+            example: "complete"
+          lastActivityTime:
+            type: string
+            format: date-time
+          lastReadPage:
+            type: string
+            example: "III Boiterie non fébrile"
+      RealtimeHistory:
+        type: object
+        required:
+          - productId
+          - userId
+          - pageReadCount
+          - lastActivityTime
+          - lastReadPage
+        properties:
+          productId:
+            type: string
+            example: 23
+          userId:
+            type: string
+            example: 3
+          pageReadCount:
+            type: string
+            example: '6'
+          lastActivityTime:
+            type: string
+            format: date-time
+          lastReadPage:
+            type: number
+            example: 5
+      Timespent:
+        type: object
+        required:
+          - id
+          - name
+          - code
+          - format
+          - duration
+        properties:
+          id:
+            type: number
+          name:
+            type: string
+            example: 'product_1'
+          code:
+            type: string
+            example: '988765123412'
+          format:
+            type: string
+            example: 'pdf'
+          duration:
+            type: number
+            example: 12
+      Pagination:
+        type: "object"
+        properties:
+          pageNumber:
+            type: "integer"
+            example: 1
+          pageSize:
+            type: "integer"
+            example: 100
+          totalCount:
+            type: "integer"
+            example: 350
+          totalPages:
+            type: "integer"
+            example: 4
+          isFirst:
+            type: "boolean"
+            example: true
+          isLast:
+            type: "boolean"
+            example: false
+      InputEvent:
+        type: object
+        properties:
+          event:
+            $ref: '#/definitions/Event'
+      Event:
+        type: object
+        properties:
+          eventType:
+            type: string
+          eventTimestamp:
+            type: number
+            example: 150820272406
+          eventVersion:
+            type: number
+            example: 3.1
+          application:
+            $ref: '#/definitions/application'
+          device:
+            $ref: '#/definitions/device'
+          session:
+            $ref: '#/definitions/session'
+          attributes:
+            $ref: '#/definitions/attributes'
+          metrics:
+            $ref: '#/definitions/metrics'
+      application:
+        type: object
+        properties:
+          appId:
+            type: string
+            example: 'a3748c1a14344c30977659437f2230fc'
+          packageName:
+            type: string
+            example: 'com.elsevier.elibraryReader'
+          sdk:
+            $ref: '#/definitions/sdk'
+          title:
+            type: string
+            example: 'eReader'
+          versionName:
+            type: number
+            example: 5.5
+          versionCode:
+            type: number
+            example: 55
+      sdk:
+        type: object
+        properties:
+          name:
+            type: string
+            example: 'aws-sdk-iOS'
+          version:
+            type: number
+            example: 2.4.9
+      device:
+        type: object
+        properties:
+          locale:
+            $ref: '#/definitions/locale'
+          make:
+            type: string
+            example: 'apple'
+          model:
+            type: string
+            example: 'iPhone'
+          platform:
+            $ref: '#/definitions/platform'
+      platform:
+        type: object
+        properties:
+          name:
+            type: string
+            example: 'iOS'
+          version:
+            type: number
+            example: 11.4.1
+      locale:
+        type: object
+        properties:
+          code:
+            type: string
+            example: 'ja_JP'
+          country:
+            type: string
+            example: 'JP'
+          language:
+            type: string
+            example: 'ja'
+      session:
+        type: object
+        properties:
+          sessionId:
+            type: string
+            example: '7f2230fc-A04604FF-20180727-065750249'
+      attributes:
+        type: object
+        properties:
+          screenWidth:
+            type: number
+            example: 320
+          pageNumber:
+            type: number
+            example: 172
+          institutionId:
+            type: number
+            example: 1
+          ip:
+            type: number
+            example: 163.212.32.61
+          screenHeight:
+            type: number
+            example: 568
+          screenName:
+            type: string
+            example: Reader
+          type:
+            type: string
+            example: reader
+          userId:
+            type: number
+            example: 1
+          bookId:
+            type: number
+            example: 7759
+          appUUID:
+            type: string
+            example: '2ca2a3b7c3319c9c3a746b4e3a6defa63eedd26e'
+          tenantId:
+            type: number
+            example: 1
+          displayOrientation:
+            type: string
+            example: portrait
+          siteId:
+            type: number
+            example: 186
+          touchX:
+            type: number
+            example: 154.5
+          displayPageNumber:
+            type: string
+            example: '1-3'
+          fileFormat:
+            type: string
+            example: pdf
+          touchY:
+            type: number
+            example: 392
+      metrics:
+        type: object
+        properties:
+          battery:
+            type: number
+            example: 0.63
+          bookFileSize:
+            type: number
+            example: 67897
+          bookDownloadTime:
+            type: number
+            example: 2345
+          bookOpenTime:
+            type: number
+            example: 1325376193017
+          readerLoadTime:
+            type: number
+            example: 1325376193017
+      OutputRealtimeEventSummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              eventSummary:
+                $ref: '#/definitions/EventSummary'
+      EventSummary:
+        properties:
+          bookOpen:
+            type: number
+            example: 20
+          searchResult:
+            type: number
+            example: 27
+      OutputRealtimeActivity:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              activity:
+                items:
+                  $ref: '#/definitions/Activity'
+                example:
+                  - timestamp: 1441079662773
+                    count: 27
+                  - timestamp: 1441079662774
+                    count: 12
+                  - timestamp: 1441079662775
+                    count: 55
+      Activity:
+        properties:
+          timestamp:
+            type: string
+          count:
+            type: number
+      OutputRealtimeUserCountrySummary:
+        type: object
+        required:
+          - status
+          - error
+          - data
+        properties:
+          status:
+            type: string
+            example: '200'
+          error:
+            type: object
+          data:
+            type: object
+            properties:
+              userCountrySummary:
+                $ref: '#/definitions/UserCountrySummary'
+      UserCountrySummary:
+        properties:
+          India:
+            type: number
+            example: 74
+          Netherland:
+            type: number
+            example: 12
+          France:
+            type: number
+            example: 34
